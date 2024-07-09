@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import json
 import logging
-import subprocess
 import time
 from collections import Counter
 from pathlib import Path
@@ -10,9 +9,9 @@ from sys import argv, stderr
 
 from loguru import logger
 
-from safari_to_sqlite.constants import SEP, TURSO_AUTH_TOKEN, TURSO_URL, TURSO_SAFARI
+from safari_to_sqlite.constants import TURSO_AUTH_TOKEN, TURSO_SAFARI, TURSO_URL
 from safari_to_sqlite.safari import get_safari_tabs
-from safari_to_sqlite.turso import turso_setup, save_auth
+from safari_to_sqlite.turso import save_auth, turso_setup
 
 from .datastore import Datastore
 
@@ -21,18 +20,18 @@ def auth(auth_path: str) -> None:
     """Save authentication credentials to a JSON file."""
     turso_url = input(
         "Enter your Turso database URL e.g. libsql://<yours>.turso.io\n"
-        "(Leave this blank to start new DB setup)\n> "
+        "(Leave this blank to start new DB setup)\n> ",
     )
     if turso_url == "":
         (turso_url, turso_auth_token) = turso_setup()
         save_auth(auth_path, turso_url, turso_auth_token)
     elif not turso_url.startswith("libsql://"):
-        print("Invalid libsql URL, please try again.")
+        logger.error("Invalid libsql URL, please try again.")
         return
     else:
         turso_auth_token = input(
             "Enter your Turso database token\n"
-            "(Create this by running `turso db tokens create <your DB>`)\n> "
+            "(Create this by running `turso db tokens create <your DB>`)\n> ",
         )
         save_auth(auth_path, turso_url, turso_auth_token)
 
@@ -57,13 +56,11 @@ def save(
     tabs, urls = get_safari_tabs(host, first_seen)
     logger.info(f"Finished loading tabs, connecting to database: {db_path}")
     duplicate_count = 0
-    for url, count in Counter(urls).most_common():
+    for _, count in Counter(urls):
         if count > 1:
             duplicate_count += count - 1
-        else:
-            break
     logger.info(
-        f"Inserting {len(tabs) - duplicate_count} tabs (ignoring existing URLs)"
+        f"Inserting {len(tabs) - duplicate_count} tabs (ignoring existing URLs)",
     )
 
     db = (
@@ -74,11 +71,13 @@ def save(
     db.insert_tabs(tabs)
 
 
-def _configure_logging():
+def _configure_logging() -> None:
     # Ours
     logger.remove()
     logger.add(
-        stderr, colorize=True, format="{time:HH:mm:ss.SS} | <level>{message}</level>"
+        stderr,
+        colorize=True,
+        format="{time:HH:mm:ss.SS} | <level>{message}</level>",
     )
     # Turso
     replication_logger = logging.getLogger("libsql_replication")

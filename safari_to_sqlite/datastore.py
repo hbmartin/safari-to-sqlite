@@ -58,17 +58,20 @@ class Datastore:
             self.con.sync()
 
     def get_tabs(self) -> Iterable[TabRow]:
+        """Return all tabs."""
         cur: libsql.Cursor = self.con.cursor()
         yield from cur.execute(
             (
                 "SELECT "  # noqa: S608
-                f"{URL}, {TITLE}, {BODY}, {WINDOW_ID}, {TAB_INDEX}, {HOST}, {FIRST_SEEN} "
+                f"{URL}, {TITLE}, {BODY}, {WINDOW_ID}, "
+                f"{TAB_INDEX}, {HOST}, {FIRST_SEEN} "
                 f"FROM {TABS};",
             ),
         )
         cur.close()
 
     def insert_tabs(self, tabs: list[TabRow]) -> None:
+        """Insert tabs into the database."""
         insert = f"INSERT OR IGNORE INTO {TABS} VALUES(?, ?, ?, ?, ?, ?, ?);"
         self.con.executemany(insert, tabs)
         self.con.commit()

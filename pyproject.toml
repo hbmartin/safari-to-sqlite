@@ -35,8 +35,11 @@ line-length = 88
 indent-width = 4
 
 lint.select = ["ALL"]
-lint.ignore = ["D100", "D102"]
+lint.ignore = ["D100", "D203", "D213"]
 target-version = "py312"
+
+[tool.ruff.lint.per-file-ignores]
+"safari_to_sqlite/turso.py" = ["S603", "S607"]
 
 [tool.ruff.format]
 # Like Black, use double quotes for strings.
@@ -50,3 +53,6 @@ skip-magic-trailing-comma = false
 
 # Like Black, automatically detect the appropriate line ending.
 line-ending = "auto"
+
+[options.extras_require]
+lint = ["black", "ruff", "pytest"]

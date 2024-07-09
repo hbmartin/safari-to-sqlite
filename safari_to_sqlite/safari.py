@@ -30,8 +30,6 @@ def get_safari_tabs(host: str, first_seen: int) -> tuple[list[TabRow], list[str]
             body = ""
             while (line := next(output_iter)) != SEP:
                 body += line + "\n"
-            if url == "" or url is None:
-                raise ValueError("URL is empty")
             tabs.append((url, title, body, window_id, tab_index, host, first_seen))
         except StopIteration:
             output_available = False

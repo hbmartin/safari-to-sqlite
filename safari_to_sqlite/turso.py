@@ -5,10 +5,11 @@ from pathlib import Path
 
 from loguru import logger
 
-from safari_to_sqlite.constants import TURSO_URL, TURSO_AUTH_TOKEN, TURSO_SAFARI
+from safari_to_sqlite.constants import TURSO_AUTH_TOKEN, TURSO_SAFARI, TURSO_URL
 
 
 def turso_setup() -> tuple[str, str]:
+    """Set up Turso database with their CLI and return URL and auth token."""
     db_name = "safari-tabs"
     if shutil.which("turso") is None:
         logger.warning("Turso not found, trying to install it with brew.")
@@ -17,12 +18,16 @@ def turso_setup() -> tuple[str, str]:
     subprocess.run(["turso", "db", "create", db_name], check=False)
     logger.info(f"Turso database created: {db_name}")
     result = subprocess.run(
-        ["turso", "db", "show", "--url", db_name], capture_output=True
+        ["turso", "db", "show", "--url", db_name],
+        capture_output=True,
+        check=False,
     )
     url = result.stdout.decode().strip()
     logger.info(f"Turso database URL: {url}")
     result = subprocess.run(
-        ["turso", "db", "tokens", "create", db_name], capture_output=True
+        ["turso", "db", "tokens", "create", db_name],
+        capture_output=True,
+        check=False,
     )
     auth_token = result.stdout.decode().strip()
     logger.info(f"Turso auth token: {auth_token[:10]}...")
