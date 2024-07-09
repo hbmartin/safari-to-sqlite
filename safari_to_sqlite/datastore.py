@@ -1,4 +1,5 @@
 from collections.abc import Iterable
+from typing import TypeAlias
 
 import libsql_experimental as libsql
 from loguru import logger
@@ -14,7 +15,7 @@ from safari_to_sqlite.constants import (
     WINDOW_ID,
 )
 
-type TabRow = tuple[str, str, str, int, int, str, int]
+TabRow: TypeAlias = tuple[str, str, str, int, int, str, int]
 
 
 class Datastore:

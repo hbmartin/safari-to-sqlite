@@ -15,7 +15,7 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
         cache: pip
-        cache-dependency-path: requirements.txt
+        cache-dependency-path: pyproject.toml
     - run: echo '${{ steps.cpython3.outputs.python-version }}'
     - run: pip install -e '.[lint]'
     - run: ruff check safari_to_sqlite
