@@ -18,13 +18,13 @@ jobs:
         cache-dependency-path: requirements.txt
     - run: echo '${{ steps.cpython3.outputs.python-version }}'
     - run: pip install -e '.[lint]'
-    - run: ruff check overcast_to_sqlite
+    - run: ruff check safari_to_sqlite
     - name: Run pytype if not on 3.12
       run: |
         if [[ '${{ steps.cpython3.outputs.python-version }}' == *"3.12"* ]]; then
           echo "pytype does not support 3.12: https://github.com/google/pytype/issues/1475"
         else
-          pytype -j auto overcast_to_sqlite
+          pytype -j auto safari_to_sqlite
         fi
     - uses: psf/black@stable
       with:
