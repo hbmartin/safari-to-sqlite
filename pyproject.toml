@@ -30,7 +30,7 @@ classifiers = [
 dependencies = ["libsql-experimental", "loguru"]
 
 [project.optional-dependencies]
-lint = ["black", "ruff", "pytest"]
+lint = ["black", "ruff", "pytype"]
 
 [project.scripts]
 safari-to-sqlite = "safari_to_sqlite.__main__:main"
