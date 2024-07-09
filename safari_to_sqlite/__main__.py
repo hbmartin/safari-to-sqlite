@@ -86,15 +86,20 @@ def _configure_logging() -> None:
     remote_client_logger.setLevel(logging.WARNING)
 
 
-if __name__ == "__main__":
+def main() -> None:
+    """Start main entry point."""
     _configure_logging()
     auth_default = "auth.json"
     if len(argv) == 1 or argv[1].endswith(".db"):
         db = argv[1] if len(argv) > 1 else "safari_tabs.db"
         auth_path = argv[2] if len(argv) > 2 else auth_default  # noqa: PLR2004
-        save(db, auth_default)
+        save(db, auth_path)
     elif argv[1] == "auth":
         auth_path = argv[1] if len(argv) > 1 else auth_default
         auth(auth_path)
     else:
         pass
+
+
+if __name__ == "__main__":
+    main()
