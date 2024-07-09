@@ -73,7 +73,7 @@ exclude = [
 # Same as Black.
 line-length = 88
 indent-width = 4
-target-version = "py312"
+target-version = "py311"
 
 lint.select = ["ALL"]
 lint.ignore = ["D100", "D203", "D213"]
