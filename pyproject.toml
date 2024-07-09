@@ -10,18 +10,12 @@ name = "safari-to-sqlite"
 version = "0.1.0"
 description = "Save tabs from Safari to a SQLite database. Supports Datasette. Can sync multiple devices with Turso."
 readme = "README.md"
-license = "Apache License, Version 2.0"
+license = {file = "LICENSE.txt"}
 requires-python = ">=3.11"
 authors = [
     { name = "Harold Martin", email = "Harold.Martin@gmail.com" },
 ]
-keywords = [
-    "browser",
-    "datasette",
-    "safari",
-    "sqlite",
-    "tabs",
-]
+keywords = ["browser", "datasette", "safari", "sqlite", "tabs"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Environment :: Console",
@@ -33,17 +27,10 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Typing :: Typed",
 ]
-dependencies = [
-    "libsql-experimental",
-    "loguru",
-]
+dependencies = ["libsql-experimental", "loguru"]
 
 [project.optional-dependencies]
-lint = [
-    "black",
-    "ruff",
-    "pytest",
-]
+lint = ["black", "ruff", "pytest"]
 
 [project.scripts]
 safari-to-sqlite = "safari_to_sqlite.__main__:main"
@@ -86,23 +73,17 @@ exclude = [
 # Same as Black.
 line-length = 88
 indent-width = 4
+target-version = "py312"
 
 lint.select = ["ALL"]
 lint.ignore = ["D100", "D203", "D213"]
-target-version = "py312"
 
 [tool.ruff.lint.per-file-ignores]
 "safari_to_sqlite/turso.py" = ["S603", "S607"]
 
 [tool.ruff.format]
-# Like Black, use double quotes for strings.
+# Same as Black.
 quote-style = "double"
-
-# Like Black, indent with spaces, rather than tabs.
 indent-style = "space"
-
-# Like Black, respect magic trailing commas.
 skip-magic-trailing-comma = false
-
-# Like Black, automatically detect the appropriate line ending.
 line-ending = "auto"
