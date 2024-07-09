@@ -1,4 +1,5 @@
 *.db
+*.db-client_wal_index
 .DS_Store
 auth.json
 archive/

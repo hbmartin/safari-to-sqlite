@@ -1,6 +1,7 @@
 BODY = "body"
 FIRST_SEEN = "firstSeen"
 HOST = "host"  # refers to user's local hostname NOT the URL host
+SCRAPE_STATUS = "scrapeStatus"
 TABS = "safari_tabs"
 TAB_INDEX = "tabIndex"
 TITLE = "title"

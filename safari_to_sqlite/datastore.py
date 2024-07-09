@@ -8,6 +8,7 @@ from safari_to_sqlite.constants import (
     BODY,
     FIRST_SEEN,
     HOST,
+    SCRAPE_STATUS,
     TAB_INDEX,
     TABS,
     TITLE,
@@ -15,7 +16,7 @@ from safari_to_sqlite.constants import (
     WINDOW_ID,
 )
 
-TabRow: TypeAlias = tuple[str, str, str, int, int, str, int]
+TabRow: TypeAlias = tuple[str, str, str, int, int, str, int, int | None]
 
 
 class Datastore:
@@ -51,7 +52,8 @@ class Datastore:
             {WINDOW_ID} INTEGER,
             {TAB_INDEX} INTEGER,
             {HOST} TEXT,
-            {FIRST_SEEN} INTEGER
+            {FIRST_SEEN} INTEGER,
+            {SCRAPE_STATUS} INTEGER
         );"""
         self.con.execute(create_tabs)
         self.con.commit()
@@ -65,7 +67,7 @@ class Datastore:
             (
                 "SELECT "  # noqa: S608
                 f"{URL}, {TITLE}, {BODY}, {WINDOW_ID}, "
-                f"{TAB_INDEX}, {HOST}, {FIRST_SEEN} "
+                f"{TAB_INDEX}, {HOST}, {FIRST_SEEN}, {SCRAPE_STATUS} "
                 f"FROM {TABS};",
             ),
         )
@@ -73,7 +75,7 @@ class Datastore:
 
     def insert_tabs(self, tabs: list[TabRow]) -> None:
         """Insert tabs into the database."""
-        insert = f"INSERT OR IGNORE INTO {TABS} VALUES(?, ?, ?, ?, ?, ?, ?);"
+        insert = f"INSERT OR IGNORE INTO {TABS} VALUES(?, ?, ?, ?, ?, ?, ?, ?);"
         self.con.executemany(insert, tabs)
         self.con.commit()
         logger.info("Local database updated successfully")

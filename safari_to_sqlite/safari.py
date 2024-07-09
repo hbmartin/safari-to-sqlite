@@ -30,7 +30,10 @@ def get_safari_tabs(host: str, first_seen: int) -> tuple[list[TabRow], list[str]
             body = ""
             while (line := next(output_iter)) != SEP:
                 body += line + "\n"
-            tabs.append((url, title, body, window_id, tab_index, host, first_seen))
+            # SCRAPE_STATUS is None because the tab has not been scraped yet
+            tabs.append(
+                (url, title, body, window_id, tab_index, host, first_seen, None),
+            )
         except StopIteration:
             output_available = False
 
