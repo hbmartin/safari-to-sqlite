@@ -52,3 +52,12 @@ safari-to-sqlite auth
 If you don't have an existing Turso account or database, no problem!
 This command will walk you through the setup process by installing the Turso CLI with brew and creating a new database for you.
 Otherwise, you can manually enter your own database URL and token.
+
+## Roadmap to 0.2
+- Add scraping for when full page content is missing from Safari
+
+## License
+
+© [Harold Martin](https://www.linkedin.com/in/harold-martin-98526971/) - released under [Apache-2.0 license](LICENSE.txt)
+
+Safari is a registered trademark of Apple Inc.
