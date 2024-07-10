@@ -14,7 +14,7 @@ def get_auth_creds_from_json(auth_json: str) -> dict[str, str]:
     turso_auth = {TURSO_URL: None, TURSO_AUTH_TOKEN: None}
     if auth_path.is_file():
         auth_data = json.loads(auth_path.read_text())
-        turso_auth = auth_data[TURSO_SAFARI]
+        turso_auth = auth_data.get(TURSO_SAFARI, turso_auth)
     else:
         logger.warning(f"Auth file {auth_json} not found, skipping remote sync.")
     return turso_auth
