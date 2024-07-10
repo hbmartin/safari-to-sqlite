@@ -76,7 +76,7 @@ def _configure_logging() -> None:
     remote_client_logger.setLevel(logging.WARNING)
 
 
-def req_body(db_path: str, auth_json: str) -> None:
+def request_missing_bodies(db_path: str, auth_json: str) -> None:
     """Request body when missing and save extracted contents."""
     db = Datastore(db_path, **get_auth_creds_from_json(auth_json))
     for url, title in db.find_empty_body():
