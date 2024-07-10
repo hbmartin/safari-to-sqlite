@@ -101,7 +101,7 @@ class Datastore:
     def find_empty_body(self) -> Iterable[tuple[str, str]]:
         """Find tabs with empty body and request the body."""
         cur: libsql.Cursor = self.con.execute(
-            f"SELECT {URL}, {TITLE} "
+            f"SELECT {URL}, {TITLE} "  # noqa: S608
             f"FROM {TABS} "
             f"WHERE {BODY} IS NULL OR {BODY} = '';",
         )

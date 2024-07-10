@@ -80,7 +80,7 @@ def request_missing_bodies(db_path: str, auth_json: str) -> None:
     """Request body when missing and save extracted contents."""
     db = Datastore(db_path, **get_auth_creds_from_json(auth_json))
     for url, title in db.find_empty_body():
-        logger.warning(url)
+        logger.warning(f"Downloading and extracting body for {title} @ {url}")
 
 
 def main() -> None:
@@ -96,9 +96,9 @@ def main() -> None:
         auth_path = argv[1] if len(argv) > 1 else auth_default
         auth(auth_path)
     elif argv[1] == "req":
-        db = argv[2] if len(argv) > 2 else db_default
+        db = argv[2] if len(argv) > 2 else db_default  # noqa: PLR2004
         auth_path = argv[3] if len(argv) > 3 else auth_default  # noqa: PLR2004
-        req_body(db, auth_path)
+        request_missing_bodies(db, auth_path)
     else:
         pass
 

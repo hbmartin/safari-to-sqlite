@@ -1,4 +1,4 @@
-_blacklist = [
+_blacklist = {
     "ally.com/",
     "americanexpress.com/",
     "bankofamerica.com/",
@@ -13,13 +13,14 @@ _blacklist = [
     "mail.google.com/",
     "outlook.com/",
     "paypal.com/",
+    ".slack.com/",
     "schwab.com/",
     "tdameritrade.com/",
     "usaa.com/",
     "usbank.com/",
     "vanguard.com/",
     "wellsfargo.com/",
-]
+}
 
 
 def filter_blacklist(url: str) -> bool:
