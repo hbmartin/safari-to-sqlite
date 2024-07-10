@@ -1,18 +1,17 @@
 #!/usr/bin/env python
 
-import json
 import logging
 import time
 from collections import Counter
-from pathlib import Path
+from functools import reduce
 from socket import gethostname
 from sys import argv, stderr
 
 from loguru import logger
 
-from safari_to_sqlite.constants import TURSO_AUTH_TOKEN, TURSO_SAFARI, TURSO_URL
+from safari_to_sqlite.blacklist import filter_blacklist
 from safari_to_sqlite.safari import get_safari_tabs
-from safari_to_sqlite.turso import save_auth, turso_setup
+from safari_to_sqlite.turso import get_auth_creds_from_json, save_auth, turso_setup
 
 from .datastore import Datastore
 
@@ -46,29 +45,19 @@ def save(
     first_seen = int(time.time())
     logger.info(f"Loading tabs from Safari for {host}...")
 
-    auth_path = Path(auth_json)
-    turso_auth = None
-    if auth_path.is_file():
-        auth_data = json.loads(auth_path.read_text())
-        turso_auth = auth_data[TURSO_SAFARI]
-    else:
-        logger.warning(f"Auth file {auth_json} not found, skipping remote sync.")
-
     tabs, urls = get_safari_tabs(host, first_seen)
     logger.info(f"Finished loading tabs, connecting to database: {db_path}")
-    duplicate_count = 0
-    for _, count in Counter(urls):
-        if count > 1:
-            duplicate_count += count - 1
+
+    initial_count = len(tabs)
+    tabs = [tab for tab in tabs if filter_blacklist(tab.url)]
+    duplicate_count = reduce(lambda acc, val: acc + val - 1, Counter(urls).values())
+    blacklist_count = initial_count - len(tabs)
     logger.info(
-        f"Inserting {len(tabs) - duplicate_count} tabs (ignoring existing URLs)",
+        f"Found {len(tabs)} tabs ({duplicate_count} duplicates, "
+        f"{blacklist_count} blacklisted)",
     )
 
-    db = (
-        Datastore(db_path, None, None)
-        if turso_auth is None
-        else Datastore(db_path, turso_auth[TURSO_URL], turso_auth[TURSO_AUTH_TOKEN])
-    )
+    db = Datastore(db_path, **get_auth_creds_from_json(auth_json))
     db.insert_tabs(tabs)
 
 
@@ -87,17 +76,29 @@ def _configure_logging() -> None:
     remote_client_logger.setLevel(logging.WARNING)
 
 
+def request_missing_bodies(db_path: str, auth_json: str) -> None:
+    """Request body when missing and save extracted contents."""
+    db = Datastore(db_path, **get_auth_creds_from_json(auth_json))
+    for url, title in db.find_empty_body():
+        logger.warning(f"Downloading and extracting body for {title} @ {url}")
+
+
 def main() -> None:
     """Start main entry point."""
     _configure_logging()
+    db_default = "safari_tabs.db"
     auth_default = "auth.json"
     if len(argv) == 1 or argv[1].endswith(".db"):
-        db = argv[1] if len(argv) > 1 else "safari_tabs.db"
+        db = argv[1] if len(argv) > 1 else db_default
         auth_path = argv[2] if len(argv) > 2 else auth_default  # noqa: PLR2004
         save(db, auth_path)
     elif argv[1] == "auth":
         auth_path = argv[1] if len(argv) > 1 else auth_default
         auth(auth_path)
+    elif argv[1] == "req":
+        db = argv[2] if len(argv) > 2 else db_default  # noqa: PLR2004
+        auth_path = argv[3] if len(argv) > 3 else auth_default  # noqa: PLR2004
+        request_missing_bodies(db, auth_path)
     else:
         pass
 

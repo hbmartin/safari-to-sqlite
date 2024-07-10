@@ -56,6 +56,31 @@ Otherwise, you can manually enter your own database URL and token.
 ## Roadmap to 0.2
 - Add scraping for when full page content is missing from Safari
 
+## Development
+
+Pull requests are very welcome! For major changes, please open an issue first to discuss what you would like to change.
+
+### Setup
+
+```bash
+git clone git@github.com:hbmartin/safari-to-sqlite.git
+cd safari-to-sqlite
+> **Note:** Ensure that Python 3 is installed on your system before running these commands.
+
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+python -m safari_to_sqlite
+```
+
+### Code Formatting
+
+This project is linted with [ruff](https://docs.astral.sh/ruff/) and uses [Black](https://github.com/psf/black) code formatting.
+
+## Authors
+
+* [Harold Martin](https://www.linkedin.com/in/harold-martin-98526971/) - harold.martin at gmail
+
 ## License
 
 © [Harold Martin](https://www.linkedin.com/in/harold-martin-98526971/) - released under [Apache-2.0 license](LICENSE.txt)

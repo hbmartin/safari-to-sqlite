@@ -1,7 +1,7 @@
 import subprocess
 from pathlib import Path
 
-from .constants import SEP
+from .constants import NOT_SCRAPED, SEP
 from .datastore import TabRow
 
 
@@ -30,9 +30,18 @@ def get_safari_tabs(host: str, first_seen: int) -> tuple[list[TabRow], list[str]
             body = ""
             while (line := next(output_iter)) != SEP:
                 body += line + "\n"
-            # SCRAPE_STATUS is None because the tab has not been scraped yet
+
             tabs.append(
-                (url, title, body, window_id, tab_index, host, first_seen, None),
+                TabRow(
+                    url,
+                    title,
+                    body.strip(),
+                    window_id,
+                    tab_index,
+                    host,
+                    first_seen,
+                    NOT_SCRAPED,
+                ),
             )
         except StopIteration:
             output_available = False

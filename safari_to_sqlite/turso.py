@@ -8,6 +8,18 @@ from loguru import logger
 from safari_to_sqlite.constants import TURSO_AUTH_TOKEN, TURSO_SAFARI, TURSO_URL
 
 
+def get_auth_creds_from_json(auth_json: str) -> dict[str, str | None]:
+    """Return Turso auth data from JSON file."""
+    auth_path = Path(auth_json)
+    turso_auth: dict[str, str | None] = {TURSO_URL: None, TURSO_AUTH_TOKEN: None}
+    if auth_path.is_file():
+        auth_data = json.loads(auth_path.read_text())
+        turso_auth = auth_data.get(TURSO_SAFARI)
+    else:
+        logger.warning(f"Auth file {auth_json} not found, skipping remote sync.")
+    return turso_auth
+
+
 def turso_setup() -> tuple[str, str]:
     """Set up Turso database with their CLI and return URL and auth token."""
     db_name = "safari-tabs"
