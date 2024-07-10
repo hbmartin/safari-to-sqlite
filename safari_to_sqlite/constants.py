@@ -12,4 +12,6 @@ TURSO_SAFARI = "turso_safari"
 TURSO_URL = "turso_url"
 TURSO_AUTH_TOKEN = "turso_auth_token"  # noqa: S105
 
+NOT_SCRAPED = -1
+
 SEP = "150r2M72e7D6Lb7Z9u1g4BSQBonv6U21W1fmX8B1TXR8XXqB2wTgQzqwoB06144d"

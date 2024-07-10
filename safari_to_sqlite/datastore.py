@@ -1,5 +1,5 @@
 from collections.abc import Iterable
-from typing import TypeAlias
+from typing import NamedTuple
 
 import libsql_experimental as libsql
 from loguru import logger
@@ -16,7 +16,18 @@ from safari_to_sqlite.constants import (
     WINDOW_ID,
 )
 
-TabRow: TypeAlias = tuple[str, str, str, int, int, str, int, int | None]
+
+class TabRow(NamedTuple):
+    """NamedTuple for tab data."""
+
+    url: str
+    title: str
+    body: str
+    window_id: int
+    tab_index: int
+    host: str
+    first_seen: int
+    scrape_status: int
 
 
 class Datastore:
@@ -30,8 +41,11 @@ class Datastore:
     ) -> None:
         """Instantiate and ensure tables exist with expected columns."""
         self.is_remote = turso_url is not None and turso_auth_token is not None
+
         if self.is_remote:
             logger.info(f"Connecting to remote db: {turso_url}")
+        else:
+            logger.info(f"Connecting to local db: {db_path}")
         self.con = (
             libsql.connect(db_path)
             if not self.is_remote
@@ -83,3 +97,15 @@ class Datastore:
             logger.info("Syncing to remote database")
             self.con.sync()
             logger.info("Finished syncing")
+
+    def find_empty_body(self) -> Iterable[tuple[str, str]]:
+        """Find tabs with empty body and request the body."""
+        cur: libsql.Cursor = self.con.execute(
+            f"SELECT {URL}, {TITLE} "
+            f"FROM {TABS} "
+            f"WHERE {BODY} IS NULL OR {BODY} = '';",
+        )
+        # Can't iterate cursor directly with libsql-experimental
+        while (row := cur.fetchone()) is not None:
+            yield row
+        cur.close()
