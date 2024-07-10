@@ -65,6 +65,8 @@ Pull requests are very welcome! For major changes, please open an issue first to
 ```bash
 git clone git@github.com:hbmartin/safari-to-sqlite.git
 cd safari-to-sqlite
+> **Note:** Ensure that Python 3 is installed on your system before running these commands.
+
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
