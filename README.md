@@ -75,7 +75,7 @@ python -m safari_to_sqlite
 
 ### Code Formatting
 
-This project is linted with [ruff](https://docs.astral.sh/ruff/) and uses [Black](https://github.com/ambv/black) code formatting.
+This project is linted with [ruff](https://docs.astral.sh/ruff/) and uses [Black](https://github.com/psf/black) code formatting.
 
 ## Authors
 
