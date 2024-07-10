@@ -24,4 +24,4 @@ _blacklist = [
 
 def filter_blacklist(url: str) -> bool:
     """Filter out blacklisted URLs."""
-    return not any(blacklisted in url for blacklisted in _blacklist)
+    return all(blacklisted not in url for blacklisted in _blacklist)
