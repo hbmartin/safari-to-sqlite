@@ -1,7 +1,7 @@
 import subprocess
 from pathlib import Path
 
-from .constants import NOT_SCRAPED, SEP
+from .constants import SEP, Browser, ScrapeStatus
 from .datastore import TabRow
 
 
@@ -40,7 +40,8 @@ def get_safari_tabs(host: str, first_seen: int) -> tuple[list[TabRow], list[str]
                     tab_index,
                     host,
                     first_seen,
-                    NOT_SCRAPED,
+                    ScrapeStatus.NotScraped.value,
+                    Browser.Safari.value,
                 ),
             )
         except StopIteration:

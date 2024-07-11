@@ -6,6 +6,7 @@ from loguru import logger
 
 from safari_to_sqlite.constants import (
     BODY,
+    BROWSER,
     FIRST_SEEN,
     HOST,
     SCRAPE_STATUS,
@@ -28,6 +29,7 @@ class TabRow(NamedTuple):
     host: str
     first_seen: int
     scrape_status: int
+    browser: str
 
 
 class Datastore:
@@ -67,7 +69,8 @@ class Datastore:
             {TAB_INDEX} INTEGER,
             {HOST} TEXT,
             {FIRST_SEEN} INTEGER,
-            {SCRAPE_STATUS} INTEGER
+            {SCRAPE_STATUS} INTEGER,
+            {BROWSER} TEXT
         );"""
         self.con.execute(create_tabs)
         self.con.commit()
@@ -81,7 +84,7 @@ class Datastore:
             (
                 "SELECT "
                 f"{URL}, {TITLE}, {BODY}, {WINDOW_ID}, "
-                f"{TAB_INDEX}, {HOST}, {FIRST_SEEN}, {SCRAPE_STATUS} "
+                f"{TAB_INDEX}, {HOST}, {FIRST_SEEN}, {SCRAPE_STATUS}, {BROWSER} "
                 f"FROM {TABS};",
             ),
         )
@@ -89,7 +92,7 @@ class Datastore:
 
     def insert_tabs(self, tabs: list[TabRow]) -> None:
         """Insert tabs into the database."""
-        insert = f"INSERT OR IGNORE INTO {TABS} VALUES(?, ?, ?, ?, ?, ?, ?, ?);"
+        insert = f"INSERT OR IGNORE INTO {TABS} VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);"
         self.con.executemany(insert, tabs)
         self.con.commit()
         logger.info("Local database updated successfully")

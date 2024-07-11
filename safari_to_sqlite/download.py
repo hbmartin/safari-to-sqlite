@@ -1,7 +1,7 @@
 from mureq import Response, get
 from trafilatura import extract
 
-from safari_to_sqlite.constants import UNICODE_FAILED
+from safari_to_sqlite.constants import ScrapeStatus
 from safari_to_sqlite.errors import FailedDownloadError
 
 
@@ -12,7 +12,7 @@ def _download(url: str) -> str:
     try:
         return response.content.decode()
     except UnicodeDecodeError as e:
-        raise FailedDownloadError(UNICODE_FAILED) from e
+        raise FailedDownloadError(ScrapeStatus.UnicodeFailed.value) from e
 
 
 def extract_body(url: str) -> str:

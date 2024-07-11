@@ -10,7 +10,7 @@ from sys import argv, stderr
 from loguru import logger
 
 from safari_to_sqlite.blacklist import filter_blacklist
-from safari_to_sqlite.constants import EXTRACT_FAILED
+from safari_to_sqlite.constants import ScrapeStatus
 from safari_to_sqlite.download import extract_body
 from safari_to_sqlite.errors import FailedDownloadError
 from safari_to_sqlite.safari import get_safari_tabs
@@ -62,6 +62,7 @@ def save(
 
     db = Datastore(db_path, **get_auth_creds_from_json(auth_json))
     db.insert_tabs(tabs)
+    request_missing_bodies(db, auth_json)
 
 
 def _configure_logging() -> None:
@@ -79,16 +80,20 @@ def _configure_logging() -> None:
     remote_client_logger.setLevel(logging.WARNING)
 
 
-def request_missing_bodies(db_path: str, auth_json: str) -> None:
+def request_missing_bodies(db_path: str | Datastore, auth_json: str) -> None:
     """Request body when missing and save extracted contents."""
-    db = Datastore(db_path, **get_auth_creds_from_json(auth_json))
+    db: Datastore = (
+        db_path
+        if isinstance(db_path, Datastore)
+        else Datastore(db_path, **get_auth_creds_from_json(auth_json))
+    )
     for url, title in db.find_empty_body():
         logger.info(f"Downloading and extracting body for {title} @ {url}")
         try:
             body = extract_body(url)
             if not body:
                 logger.error(f"Failed to extract: {url}")
-            db.update_body(url, body or EXTRACT_FAILED)
+            db.update_body(url, body or ScrapeStatus.ExtractFailed.value)
         except FailedDownloadError as e:
             logger.error(f"Failed to download ({e.code}): {url}")
             db.update_body(url, e.code)
