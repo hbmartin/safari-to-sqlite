@@ -79,7 +79,7 @@ class Datastore:
         cur: libsql.Cursor = self.con.cursor()
         yield from cur.execute(
             (
-                "SELECT "  # noqa: S608
+                "SELECT "
                 f"{URL}, {TITLE}, {BODY}, {WINDOW_ID}, "
                 f"{TAB_INDEX}, {HOST}, {FIRST_SEEN}, {SCRAPE_STATUS} "
                 f"FROM {TABS};",
@@ -101,11 +101,23 @@ class Datastore:
     def find_empty_body(self) -> Iterable[tuple[str, str]]:
         """Find tabs with empty body and request the body."""
         cur: libsql.Cursor = self.con.execute(
-            f"SELECT {URL}, {TITLE} "  # noqa: S608
+            f"SELECT {URL}, {TITLE} "
             f"FROM {TABS} "
-            f"WHERE {BODY} IS NULL OR {BODY} = '';",
+            f"WHERE ({BODY} IS NULL OR {BODY} = '') AND {SCRAPE_STATUS} < 400;",
         )
         # Can't iterate cursor directly with libsql-experimental
         while (row := cur.fetchone()) is not None:
             yield row
         cur.close()
+
+    def update_body(self, url: str, body: str | int) -> None:
+        """Update body for the URL. If body is an int, update scrape status instead."""
+        if isinstance(body, int):
+            stmt = f"UPDATE {TABS} SET {SCRAPE_STATUS} = ? WHERE {URL} = ?;"
+        else:
+            stmt = (
+                f"UPDATE {TABS} SET {BODY} = ?, {SCRAPE_STATUS} = 200 "
+                f"WHERE {URL} = ?;"
+            )
+        self.con.execute(stmt, (body, url))
+        self.con.commit()

@@ -1,2 +1,4 @@
 libsql-experimental==0.0.34
 loguru==0.7.2
+mureq==0.2.0
+trafilatura==1.11.0
