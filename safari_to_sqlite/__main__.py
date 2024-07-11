@@ -10,6 +10,9 @@ from sys import argv, stderr
 from loguru import logger
 
 from safari_to_sqlite.blacklist import filter_blacklist
+from safari_to_sqlite.constants import EXTRACT_FAILED
+from safari_to_sqlite.download import extract_body
+from safari_to_sqlite.errors import FailedDownloadError
 from safari_to_sqlite.safari import get_safari_tabs
 from safari_to_sqlite.turso import get_auth_creds_from_json, save_auth, turso_setup
 
@@ -80,7 +83,15 @@ def request_missing_bodies(db_path: str, auth_json: str) -> None:
     """Request body when missing and save extracted contents."""
     db = Datastore(db_path, **get_auth_creds_from_json(auth_json))
     for url, title in db.find_empty_body():
-        logger.warning(f"Downloading and extracting body for {title} @ {url}")
+        logger.info(f"Downloading and extracting body for {title} @ {url}")
+        try:
+            body = extract_body(url)
+            if body is None:
+                logger.error(f"Failed to extract: {url}")
+            db.update_body(url, body or EXTRACT_FAILED)
+        except FailedDownloadError as e:
+            logger.error(f"Failed to download ({e.code}): {url}")
+            db.update_body(url, e.code)
 
 
 def main() -> None:

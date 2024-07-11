@@ -53,9 +53,6 @@ If you don't have an existing Turso account or database, no problem!
 This command will walk you through the setup process by installing the Turso CLI with brew and creating a new database for you.
 Otherwise, you can manually enter your own database URL and token.
 
-## Roadmap to 0.2
-- Add scraping for when full page content is missing from Safari
-
 ## Development
 
 Pull requests are very welcome! For major changes, please open an issue first to discuss what you would like to change.
@@ -63,13 +60,16 @@ Pull requests are very welcome! For major changes, please open an issue first to
 ### Setup
 
 ```bash
+brew install python3
+# If you don't have python3 installed installed
+
 git clone git@github.com:hbmartin/safari-to-sqlite.git
 cd safari-to-sqlite
-> **Note:** Ensure that Python 3 is installed on your system before running these commands.
 
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
+
 python -m safari_to_sqlite
 ```
 

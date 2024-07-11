@@ -27,7 +27,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Typing :: Typed",
 ]
-dependencies = ["libsql-experimental", "loguru"]
+dependencies = ["libsql-experimental", "loguru", "mureq", "trafilatura"]
 
 [project.optional-dependencies]
 lint = ["black", "ruff", "pyroma", "pytype"]
@@ -48,7 +48,7 @@ indent-width = 4
 target-version = "py311"
 
 lint.select = ["ALL"]
-lint.ignore = ["D100", "D203", "D213"]
+lint.ignore = ["D100", "D107", "D203", "D213", "S608"]
 
 [tool.ruff.lint.per-file-ignores]
 "safari_to_sqlite/turso.py" = ["S603", "S607"]
