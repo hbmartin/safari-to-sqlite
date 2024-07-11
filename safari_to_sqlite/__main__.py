@@ -86,7 +86,7 @@ def request_missing_bodies(db_path: str, auth_json: str) -> None:
         logger.info(f"Downloading and extracting body for {title} @ {url}")
         try:
             body = extract_body(url)
-            if body is None:
+            if not body:
                 logger.error(f"Failed to extract: {url}")
             db.update_body(url, body or EXTRACT_FAILED)
         except FailedDownloadError as e:
