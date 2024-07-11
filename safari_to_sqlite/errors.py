@@ -1,11 +1,11 @@
-class SafariValueError(Exception):
+class SafariError(Exception):
     """Base class for exceptions raised during conversion."""
 
     def __init__(self, message: str) -> None:
         super().__init__(message)
 
 
-class FailedDownloadError(SafariValueError):
+class FailedDownloadError(SafariError):
     """Page download error."""
 
     def __init__(self, code: int) -> None:

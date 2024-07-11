@@ -14,6 +14,7 @@ Save tabs from Safari to a SQLite database. Multiple devices can be synced with 
 - [How to install](#how-to-install)
 - [Usage](#usage)
 - [Authentication](#authentication)
+- [Downloading missing body content](#downloading-missing-body-content)
 
 ## How to install
 
@@ -53,6 +54,14 @@ If you don't have an existing Turso account or database, no problem!
 This command will walk you through the setup process by installing the Turso CLI with brew and creating a new database for you.
 Otherwise, you can manually enter your own database URL and token.
 
+## Downloading missing body content
+
+Safari may not return the tab's body content if it is not available for some reason. To download and extract page content when this is missing, run:
+
+```bash
+safari-to-sqlite download
+```
+
 ## Development
 
 Pull requests are very welcome! For major changes, please open an issue first to discuss what you would like to change.
@@ -61,7 +70,7 @@ Pull requests are very welcome! For major changes, please open an issue first to
 
 ```bash
 brew install python3
-# If you don't have python3 installed installed
+# If you don't have python3 installed
 
 git clone git@github.com:hbmartin/safari-to-sqlite.git
 cd safari-to-sqlite

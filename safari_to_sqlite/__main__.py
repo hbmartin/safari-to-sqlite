@@ -106,7 +106,7 @@ def main() -> None:
     elif argv[1] == "auth":
         auth_path = argv[1] if len(argv) > 1 else auth_default
         auth(auth_path)
-    elif argv[1] == "req":
+    elif argv[1] == "download":
         db = argv[2] if len(argv) > 2 else db_default  # noqa: PLR2004
         auth_path = argv[3] if len(argv) > 3 else auth_default  # noqa: PLR2004
         request_missing_bodies(db, auth_path)
