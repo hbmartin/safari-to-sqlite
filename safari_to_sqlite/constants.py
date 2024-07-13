@@ -28,7 +28,7 @@ class Browser(str, Enum):
     """Enum for browser."""
 
     Safari = "safari"
-    iCloud = "icloud"
+    Icloud = "icloud"
     Chrome = "chrome"
 
 

@@ -7,8 +7,8 @@ from safari_to_sqlite.datastore import TabRow
 
 
 def read_history() -> Iterable[TabRow]:
+    """Read Safari history from local SQLite database."""
     db_path = Path.home() / "Library/Safari/History.db"
-    print(db_path)
     con = sqlite3.connect(db_path)
     query = (
         "SELECT history_items.url, title, visit_time, history_visits.origin "
@@ -26,7 +26,7 @@ def read_history() -> Iterable[TabRow]:
             host="",
             first_seen=int(row[2]),
             scrape_status=-1,
-            browser=Browser.Safari.value if row[3] == 1 else Browser.iCloud.value,
+            browser=Browser.Safari.value if row[3] == 1 else Browser.Icloud.value,
         )
     cur.close()
     con.close()
