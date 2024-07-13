@@ -52,6 +52,7 @@ lint.ignore = ["D100", "D107", "D203", "D213", "S608"]
 
 [tool.ruff.lint.per-file-ignores]
 "safari_to_sqlite/turso.py" = ["S603", "S607"]
+"safari_to_sqlite/more_itertools.py" = ["RET505", "EM101", "TRY003", "ANN202", "D415", "D400", "ANN001", "FBT002", "ANN201"]
 
 [tool.ruff.format]
 # Same as Black.

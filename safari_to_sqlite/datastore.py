@@ -101,7 +101,7 @@ class Datastore:
             self.con.sync()
             logger.info("Finished syncing")
 
-    def find_empty_bodies(self) -> list[str]:
+    def find_empty_bodies(self) -> list[tuple[str]]:
         """Find tabs with empty body and request the body."""
         cur: libsql.Cursor = self.con.execute(
             f"SELECT {URL} FROM {TABS} "

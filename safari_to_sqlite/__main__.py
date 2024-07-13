@@ -10,8 +10,9 @@ from sys import argv, stderr
 from loguru import logger
 
 from safari_to_sqlite.blacklist import filter_blacklist
-from safari_to_sqlite.download import extract_bodies
+from safari_to_sqlite.download import BATCH_SIZE, extract_bodies
 from safari_to_sqlite.history import read_history
+from safari_to_sqlite.more_itertools import chunked
 from safari_to_sqlite.safari import get_safari_tabs
 from safari_to_sqlite.turso import get_auth_creds_from_json, save_auth, turso_setup
 
@@ -87,9 +88,14 @@ def request_missing_bodies(db_path: str | Datastore, auth_json: str) -> Datastor
     )
     needs_scraping = db.find_empty_bodies()
     logger.info(f"Found {len(needs_scraping)} URLs to scrape")
-    successes, errors = extract_bodies(needs_scraping)
-    db.update_bodies(successes)
-    db.update_scrape_statuses(errors)
+    logger.info(f"Parallelizing extraction with batch size: {BATCH_SIZE}")
+    for batch in chunked(needs_scraping, BATCH_SIZE):
+        successes, errors = extract_bodies(batch)
+        logger.info(f"Extracted: {len(successes)}")
+        if (len_errors := len(errors)) > 0:
+            logger.warning(f"Errors: {len_errors}")
+        db.update_bodies(successes)
+        db.update_scrape_statuses(errors)
     return db
 
 
