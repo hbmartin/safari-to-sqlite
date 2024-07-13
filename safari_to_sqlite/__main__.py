@@ -10,9 +10,7 @@ from sys import argv, stderr
 from loguru import logger
 
 from safari_to_sqlite.blacklist import filter_blacklist
-from safari_to_sqlite.constants import ScrapeStatus
-from safari_to_sqlite.download import extract_body
-from safari_to_sqlite.errors import FailedDownloadError
+from safari_to_sqlite.download import extract_bodies
 from safari_to_sqlite.history import read_history
 from safari_to_sqlite.safari import get_safari_tabs
 from safari_to_sqlite.turso import get_auth_creds_from_json, save_auth, turso_setup
@@ -87,16 +85,11 @@ def request_missing_bodies(db_path: str | Datastore, auth_json: str) -> Datastor
         if isinstance(db_path, Datastore)
         else Datastore(db_path, **get_auth_creds_from_json(auth_json))
     )
-    for url, title in db.find_empty_body():
-        logger.info(f"Downloading and extracting body for {title} @ {url}")
-        try:
-            body = extract_body(url)
-            if not body:
-                logger.error(f"Failed to extract: {url}")
-            db.update_body(url, body or ScrapeStatus.ExtractFailed.value)
-        except FailedDownloadError as e:
-            logger.error(f"Failed to download ({e.code}): {url}")
-            db.update_body(url, e.code)
+    needs_scraping = db.find_empty_bodies()
+    logger.info(f"Found {len(needs_scraping)} URLs to scrape")
+    successes, errors = extract_bodies(needs_scraping)
+    db.update_bodies(successes)
+    db.update_scrape_statuses(errors)
     return db
 
 

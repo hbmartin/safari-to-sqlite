@@ -101,28 +101,27 @@ class Datastore:
             self.con.sync()
             logger.info("Finished syncing")
 
-    def find_empty_body(self) -> Iterable[tuple[str, str]]:
+    def find_empty_bodies(self) -> list[str]:
         """Find tabs with empty body and request the body."""
         cur: libsql.Cursor = self.con.execute(
-            f"SELECT {URL}, {TITLE} "
-            f"FROM {TABS} "
+            f"SELECT {URL} FROM {TABS} "
             f"WHERE ({BODY} IS NULL OR {BODY} = '') AND {SCRAPE_STATUS} < 400;",
         )
-        # Can't iterate cursor directly with libsql-experimental
-        while (row := cur.fetchone()) is not None:
-            yield row
+        result = cur.fetchall()
         cur.close()
+        return result
 
-    def update_body(self, url: str, body: str | int) -> None:
-        """Update body for the URL. If body is an int, update scrape status instead."""
-        if isinstance(body, int):
-            stmt = f"UPDATE {TABS} SET {SCRAPE_STATUS} = ? WHERE {URL} = ?;"
-        else:
-            stmt = (
-                f"UPDATE {TABS} SET {BODY} = ?, {SCRAPE_STATUS} = 200 "
-                f"WHERE {URL} = ?;"
-            )
-        self.con.execute(stmt, (body, url))
+    def update_bodies(self, bodies: list[tuple[str, str]]) -> None:
+        """Update body for the URL."""
+        stmt = f"UPDATE {TABS} SET {BODY} = ?, {SCRAPE_STATUS} = 200 WHERE {URL} = ?;"
+        self.con.executemany(stmt, bodies)
+        self.con.commit()
+
+    def update_scrape_statuses(self, statuses: list[tuple[str, int]]) -> None:
+        """Update scrap status for the URL."""
+        stmt = f"UPDATE {TABS} SET {SCRAPE_STATUS} = ? WHERE {URL} = ?;"
+
+        self.con.executemany(stmt, statuses)
         self.con.commit()
 
     def close(self) -> None:
