@@ -124,3 +124,11 @@ class Datastore:
             )
         self.con.execute(stmt, (body, url))
         self.con.commit()
+
+    def close(self) -> None:
+        """Close the connection."""
+        try:
+            self.con.sync()
+            self.con.close()
+        except (AttributeError, ValueError):
+            pass

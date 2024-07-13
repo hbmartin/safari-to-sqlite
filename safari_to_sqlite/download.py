@@ -6,7 +6,7 @@ from safari_to_sqlite.errors import FailedDownloadError
 
 
 def _download(url: str) -> str:
-    response: Response = get(url, max_redirects=5)
+    response: Response = get(url, max_redirects=2)
     if not response.ok:
         raise FailedDownloadError(response.status_code)
     try:
