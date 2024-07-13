@@ -16,7 +16,7 @@ TURSO_URL = "turso_url"
 TURSO_AUTH_TOKEN = "turso_auth_token"  # noqa: S105
 
 
-class ScrapeStatus(Enum):
+class ScrapeStatus(int, Enum):
     """Enum for scrape status."""
 
     NotScraped = -1
@@ -24,10 +24,11 @@ class ScrapeStatus(Enum):
     UnicodeFailed = -3
 
 
-class Browser(Enum):
+class Browser(str, Enum):
     """Enum for browser."""
 
     Safari = "safari"
+    iCloud = "icloud"
     Chrome = "chrome"
 
 

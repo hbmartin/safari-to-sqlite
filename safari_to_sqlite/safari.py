@@ -13,17 +13,15 @@ def _get_safari_tabs_raw() -> list[str]:
     return result.stderr.decode().strip().splitlines()
 
 
-def get_safari_tabs(host: str, first_seen: int) -> tuple[list[TabRow], list[str]]:
+def get_safari_tabs(host: str, first_seen: int) -> list[TabRow]:
     """Return all tabs."""
     output_iter = iter(_get_safari_tabs_raw())
     tabs = []
     output_available = True
-    urls = []
 
     while output_available:
         try:
             url = next(output_iter)
-            urls.append(url)
             title = next(output_iter)
             window_id = int(next(output_iter))
             tab_index = int(next(output_iter))
@@ -47,4 +45,4 @@ def get_safari_tabs(host: str, first_seen: int) -> tuple[list[TabRow], list[str]
         except StopIteration:
             output_available = False
 
-    return tabs, urls
+    return tabs
