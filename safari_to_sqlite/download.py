@@ -3,7 +3,6 @@ from concurrent.futures import ThreadPoolExecutor
 from http.client import HTTPException
 from os import cpu_count
 
-from loguru import logger
 from mureq import Response, TooManyRedirects, get
 from trafilatura import extract
 
