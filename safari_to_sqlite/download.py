@@ -54,7 +54,7 @@ def extract_bodies(
         # Mapping the read_first_line function over all file paths
         for result in executor.map(_extract_body, urls):
             if isinstance(result[1], int):
-                errors.append(result)
+                errors.append(result)  # pytype: disable=container-type-mismatch
             else:
                 successes.append(result)
     return successes, errors
