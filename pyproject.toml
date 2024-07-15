@@ -7,7 +7,7 @@ packages = ["safari_to_sqlite"]
 
 [project]
 name = "safari-to-sqlite"
-version = "0.3.0"
+version = "0.4.0"
 description = "Save tabs from Safari to a SQLite database. Supports Datasette. Can sync multiple devices with Turso."
 readme = "README.md"
 license = {file = "LICENSE.txt"}
