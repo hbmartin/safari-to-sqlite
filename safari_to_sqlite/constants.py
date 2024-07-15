@@ -22,6 +22,9 @@ class ScrapeStatus(int, Enum):
     NotScraped = -1
     ExtractFailed = -2
     UnicodeFailed = -3
+    RedirectsExceeded = -4
+    Timeout = -5
+    UnknownHttp = -6
 
 
 class Browser(str, Enum):
